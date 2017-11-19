@@ -7,6 +7,7 @@
 
     <!-- dependencies -->
     <script src="bower_components/jquery/dist/jquery.js"></script>
+    <script scr="https://cdn.rawgit.com/jashkenas/underscore/1.7.0/underscore-min.js"></script>
     <script>
       // YOU DO NOT NEED TO EDIT THIS CODE
       if (!/(&|\?)username=/.test(window.location.search)) {
@@ -21,11 +22,16 @@
     <!-- your scripts -->
     <script src="env/config.js"></script>
     <script src="scripts/app.js"></script>
+    <script src="scripts/jqueryfile.js"></script>
   </head>
   <body>
     <div id="main">
       <h1>chatterbox</h1>
       <!-- Your HTML goes here! -->
+      <form accept-charset: "character_set">
+        <input type = "text" id = "message">
+        <button type = "button">Submit</button>
+      </form>
     </div>
     <div id="chats"></div>
   </body>

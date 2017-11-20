@@ -2,19 +2,26 @@
 
 $( document ).ready(function() {
   app.fetch();
-$('button').on('click', function() {
+  app.getSchema();
+    $('#submit').on('click', function() {
 
+      var message = {
+        username: 'anonymous',
+        text: $('#message').val(),
+        roomname: 'lobby'
+      };
 
-  var message = {
-    username: 'anonymous',
-    text: $('#message').val(),
-    roomname: 'lobby'
-  };
+      app.send(message);
+      app.fetch();
+    });
 
-  app.send(message);
-  app.fetch();
+    $('#clear').on('click', function() {
+      app.clearMessages();
+    });
 
-  });
+    $('#get').on('click', function() {
+      app.fetch();
+    });
 });
 
 

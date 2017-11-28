@@ -26,26 +26,9 @@
 var app = {};
 
 app.server = 'http:parse.rpt.hackreactor.com/chatterbox/classes/messages';
-app.schema = encodeURI('http:parse.rpt.hackreactor.com/chatterbox/classes/messages') + "%5Bobject%20Object%5D";
 
 app.init = function() {
 
-}
-
-app.getSchema = function() {
-  $.ajax({
-    url: decodeURI(this.schema),
-    type: 'GET',
-    contentType: 'json',
-    success: function (data) {
-      console.log(data);
-      console.log('chatterbox: Messages fetched');
-    },
-    error: function (data) {
-      // See: https://developer.mozilla.org/en-US/docs/Web/API/console.error
-      console.error('chatterbox: Failed to get schemas', data);
-  }
-  });
 }
 
 app.send = function(message) {
@@ -64,15 +47,18 @@ app.send = function(message) {
   });
 }
 
+var limit = encodeURI('limit=1000');
+var skip = encodeURI('skip=600');
+
 app.fetch = function() {
   $.ajax({
   url: this.server,
   type: 'GET',
   contentType: 'json',
-  limit: '1000',
+  data: {limit, skip},
   success: function (data) {
     //console.log(data);
-    var array = data.results;
+    var array = data.results.slice(data.results.length - 20);
 
     array.forEach(function(message) {
       app.renderMessage(message);
@@ -87,15 +73,23 @@ app.fetch = function() {
 }
 
 app.clearMessages = function() {
-  $('.temp').remove();
+  $('#chats').empty();
+}
+
+app.checkHack = function(text) {
+  if (text.indexOf('<') !== -1) {
+    return 'nice try hacker';
+  }
+  return text;
 }
 
 app.renderMessage = function(message) {
   var text = message.text;
-  //console.log(text);
-  var node = $('<p class= "temp">'+ text +'</p>');
-  //console.log(node);
-  $('#chats').append(node);
+  var username = message.username;
+  text = app.checkHack(text);
+  username = app.checkHack(username);
+  var node = $('<p class= "temp">'+ username + ' : ' + text +'</p>');
+  $('#chats').prepend(node);
 }
 
 // app.renderRoom = function() {

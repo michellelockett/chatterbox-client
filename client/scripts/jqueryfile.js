@@ -2,11 +2,11 @@
 
 $( document ).ready(function() {
   app.fetch();
-  app.getSchema();
     $('#submit').on('click', function() {
-
+      var index = window.location.search.indexOf('=') + 1;
+      var username = window.location.search.slice(index);
       var message = {
-        username: 'anonymous',
+        username: decodeURIComponent(username),
         text: $('#message').val(),
         roomname: 'lobby'
       };

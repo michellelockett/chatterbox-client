@@ -27,16 +27,18 @@ var app = {};
 
 app.server = 'http:parse.rpt.hackreactor.com/chatterbox/classes/messages';
 
-let messages = [];
-let rooms = {};
+var messages = [];
+app.rooms = {};
 app.init = function() {
+  console.log('called init');
   //grab last 200 messages from server
-  app.fetch();
-  //get the room names
-  for (var room in rooms) {
+  this.fetch()
+
+  for (var room in this.rooms) {
     console.log(room);
     $('#roomSelect').append('<option value="' + room + '">' + room + '</option>');
   }
+
   //append each individual unique room to the select form rooms
 }
 
@@ -67,23 +69,39 @@ app.fetch = function() {
   type: 'GET',
   contentType: 'json',
   data: {limit: 1000, skip: 500},
+  async: false,
   success: function (data) {
+    console.log(this.rooms, 'this');
     console.log(data.results.length);
     var array = data.results.slice(data.results.length - 200);
     for (var i = 0; i < array.length; i++) {
-      let room = array[i].roomname;
-      if (!rooms[room]) {
-        rooms[room] = [array[i]];
+      var room = array[i].roomname;
+      var id = array[i].objectId;
+      var truthy = false;
+      //check if room exists
+      // if not then we update the value of that prop to equal message
+      //
+      if (!app.rooms[room]) {
+        app.rooms[room] = [array[i]];
       } else {
-        if (!rooms[room].includes(array[i])) {
-          rooms[room].push(array[i]);
+        // check all the messages in rooms[room]
+        // if the message isn't already there, push it
+        // otherwise do nothing
+       app.rooms[room].forEach(function(message) {
+         if (message.objectId === id) {
+           truthy = true;
+         }
+       });
+
+       if (!truthy) {
+          app.rooms[room].push(array[i]);
        }
-      }
+     }
     }
-    for (var room in rooms) {
-      console.log(room);
-      $('#roomSelect').append('<option value="' + room + '">' + room + '</option>');
-    }
+
+    // for (var room in app.rooms) {
+    //   $('#roomSelect').append('<option value="' + room + '">' + room + '</option>');
+    // }
     console.log('chatterbox: Messages fetched');
   },
   error: function (data) {

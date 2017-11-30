@@ -1,7 +1,8 @@
 //fiture out how to get a username
 
 $( document ).ready(function() {
-  app.fetch();
+  app.init();
+  //app.fetch();
   $('#submit').on('click', function() {
     var index = window.location.search.indexOf('=') + 1;
     var username = window.location.search.slice(index);

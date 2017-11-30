@@ -27,8 +27,17 @@ var app = {};
 
 app.server = 'http:parse.rpt.hackreactor.com/chatterbox/classes/messages';
 
+let messages = [];
+let rooms = {};
 app.init = function() {
-
+  //grab last 200 messages from server
+  app.fetch();
+  //get the room names
+  for (var room in rooms) {
+    console.log(room);
+    $('#roomSelect').append('<option value="' + room + '">' + room + '</option>');
+  }
+  //append each individual unique room to the select form rooms
 }
 
 app.send = function(message) {
@@ -47,22 +56,34 @@ app.send = function(message) {
   });
 }
 
-var limit = encodeURI('limit=1000');
-var skip = encodeURI('skip=600');
+ // array.forEach(function(message) {
+ //      app.renderMessage(message);
+ //      console.log(message, message.roomname);
+ //    });
 
 app.fetch = function() {
   $.ajax({
   url: this.server,
   type: 'GET',
   contentType: 'json',
-  data: {limit, skip},
+  data: {limit: 1000, skip: 500},
   success: function (data) {
-    //console.log(data);
-    var array = data.results.slice(data.results.length - 20);
-
-    array.forEach(function(message) {
-      app.renderMessage(message);
-    });
+    console.log(data.results.length);
+    var array = data.results.slice(data.results.length - 200);
+    for (var i = 0; i < array.length; i++) {
+      let room = array[i].roomname;
+      if (!rooms[room]) {
+        rooms[room] = [array[i]];
+      } else {
+        if (!rooms[room].includes(array[i])) {
+          rooms[room].push(array[i]);
+       }
+      }
+    }
+    for (var room in rooms) {
+      console.log(room);
+      $('#roomSelect').append('<option value="' + room + '">' + room + '</option>');
+    }
     console.log('chatterbox: Messages fetched');
   },
   error: function (data) {
@@ -77,7 +98,7 @@ app.clearMessages = function() {
 }
 
 app.checkHack = function(text) {
-  if (text.indexOf('<') !== -1) {
+  if (text && text.indexOf('<') !== -1) {
     return 'nice try hacker';
   }
   return text;
@@ -92,9 +113,11 @@ app.renderMessage = function(message) {
   $('#chats').prepend(node);
 }
 
-// app.renderRoom = function() {
+app.renderRoom = function() {
+  //figure out how to show max 10 messages, make the oldest ones drop off
 
-// }
+  //match the lobby name to the roomname messages
+}
 
 // app.handleUsernameClick = function() {
 //   restore: function() {

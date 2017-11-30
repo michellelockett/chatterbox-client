@@ -2,26 +2,25 @@
 
 $( document ).ready(function() {
   app.fetch();
-    $('#submit').on('click', function() {
-      var index = window.location.search.indexOf('=') + 1;
-      var username = window.location.search.slice(index);
-      var message = {
-        username: decodeURIComponent(username),
-        text: $('#message').val(),
-        roomname: 'lobby'
-      };
+  $('#submit').on('click', function() {
+    var index = window.location.search.indexOf('=') + 1;
+    var username = window.location.search.slice(index);
+    var message = {
+      username: decodeURIComponent(username),
+      text: $('#message').val(),
+      roomname: 'lobby'
+    };
+    app.send(message);
+    app.fetch();
+  });
 
-      app.send(message);
-      app.fetch();
-    });
+  $('#clear').on('click', function() {
+    app.clearMessages();
+  });
 
-    $('#clear').on('click', function() {
-      app.clearMessages();
-    });
-
-    $('#get').on('click', function() {
-      app.fetch();
-    });
+  $('#get').on('click', function() {
+    app.fetch();
+  });
 });
 
 
